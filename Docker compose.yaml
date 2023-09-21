@@ -1,0 +1,31 @@
+services:
+  db:
+    # We use a mariadb image which supports both amd64 & arm64 architecture
+    # If you really want to use MySQL, uncomment the following line
+    image: mysql:8.0.27
+    command: '--default-authentication-plugin=mysql_native_password'
+    volumes:
+      - db_data:/var/lib/mysql
+    restart: always
+    environment:
+      - MYSQL_ROOT_PASSWORD=anand
+      - MYSQL_DATABASE=anand
+      - MYSQL_USER=anand
+      - MYSQL_PASSWORD=anand
+    expose:
+      - 3306
+  tomcat:
+    depends_on:
+       - db
+    image: tomcat:latest
+    ports:
+      - 8089:8080
+    restart: always
+    environment:
+      - SPRING.DATASOURCE.URL=jdbc:mysql://db:3306/anand
+      - SPRING.DATASOURCE.USERNAME=anand
+      - SPRING.DATASOURCE.PASSWORD=anand
+    volumes:
+      - ./target/ashwin.war:/usr/local/tomcat/webapps/ashwin.war
+volumes:
+  db_data:
